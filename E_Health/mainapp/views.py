@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db.models import Count, Q
@@ -14,6 +14,16 @@ from .serializers import (
     AppointmentSerializer, MedicalRecordSerializer, AppointmentListSerializer,
     MedicalRecordListSerializer, DashboardStatsSerializer
 )
+
+
+@api_view(['GET'])
+def health_check(request):
+    """Simple health check endpoint for API testing"""
+    return Response({
+        'status': 'healthy',
+        'message': 'EHR API is running successfully',
+        'timestamp': timezone.now().isoformat()
+    })
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -375,15 +385,3 @@ class DashboardViewSet(viewsets.ViewSet):
             'recent_appointments': AppointmentListSerializer(recent_appointments, many=True).data,
             'recent_records': MedicalRecordListSerializer(recent_records, many=True).data
         })
-
-
-def health_check(request):
-    """Simple health check endpoint for API testing"""
-    from rest_framework.decorators import api_view
-    from rest_framework.response import Response
-    
-    return Response({
-        'status': 'healthy',
-        'message': 'EHR API is running successfully',
-        'timestamp': timezone.now().isoformat()
-    })
