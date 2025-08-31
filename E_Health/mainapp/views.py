@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.db.models import Count, Q
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -32,16 +32,15 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]  # Allow registration
     
     def get_permissions(self):
         """Customize permissions based on action"""
         if self.action in ['create']:
-            return [permissions.AllowAny]  # Anyone can register
+            return [AllowAny()]  # Anyone can register
         elif self.action in ['retrieve', 'update', 'partial_update']:
-            return [IsAuthenticated]  # Users can only edit their own profile
+            return [IsAuthenticated()]  # Users can only edit their own profile
         else:
-            return [IsAdminUser]  # Only admins can list/delete users
+            return [IsAdminUser()]  # Only admins can list/delete users
     
     def create(self, request, *args, **kwargs):
         """User registration"""
@@ -102,7 +101,7 @@ class PatientProfileViewSet(viewsets.ModelViewSet):
     """
     queryset = PatientProfile.objects.all()
     serializer_class = PatientProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated()]
     
     def get_queryset(self):
         """Filter queryset based on user role"""
@@ -132,7 +131,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     """
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated()]
     
     def get_serializer_class(self):
         """Use different serializers for different actions"""
@@ -266,7 +265,7 @@ class MedicalRecordViewSet(viewsets.ModelViewSet):
     """
     queryset = MedicalRecord.objects.all()
     serializer_class = MedicalRecordSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated()]
     
     def get_serializer_class(self):
         """Use different serializers for different actions"""
@@ -333,7 +332,7 @@ class DashboardViewSet(viewsets.ViewSet):
     """
     ViewSet for admin dashboard statistics
     """
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser()]
     
     @action(detail=False, methods=['get'])
     def stats(self, request):
