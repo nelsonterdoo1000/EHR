@@ -171,6 +171,130 @@ asgiref==3.9.1
 sqlparse==0.5.3
 
 
+1. Set Up Postman Collection
+Create a new collection called "EHR API"
+Set up environment variables:
+base_url: http://localhost:8000/api
+auth_token: (leave empty initially)
+2. Test Health Check (No Auth Required)
+Request:
+Method: GET
+URL: {{base_url}}/health-check/
+Headers: None required
+Expected Response:
+{
+  "status": "healthy",
+  "message": "EHR API is running successfully",
+  "timestamp": "2024-01-15T10:00:00Z"
+}
 
+3. Test User Registration (No Auth Required)
+Request:
+Method: POST
+URL: {{base_url}}/users/
+Headers: Content-Type: application/json
+Body (raw JSON)
+{
+  "email": "testpatient@example.com",
+  "name": "John Doe",
+  "role": "patient",
+  "contact_info": "+1234567890",
+  "password": "SecurePass123!",
+  "password2": "SecurePass123!"
+}
+Expected Response:
+{
+  "message": "User registered successfully",
+  "user": {
+    "id": 1,
+    "email": "testpatient@example.com",
+    "name": "John Doe",
+    "role": "patient",
+    "contact_info": "+1234567890",
+    "date_joined": "2024-01-15T10:00:00Z"
+  }
+}
 
+4. Test User Login (No Auth Required)
+Request:
+Method: POST
+URL: {{base_url}}/auth/login/
+Headers: Content-Type: application/json
+Body (raw JSON):
+{
+  "email": "testpatient@example.com",
+  "password": "SecurePass123!"
+}
+Expected Response:
+{
+  "message": "Login successful",
+  "user": {
+    "id": 1,
+    "email": "testpatient@example.com",
+    "name": "John Doe",
+    "role": "patient",
+    "contact_info": "+1234567890",
+    "date_joined": "2024-01-15T10:00:00Z"
+  }
+}
+5. Test Creating a Doctor
+Request:
+Method: POST
+URL: {{base_url}}/users/
+Headers: Content-Type: application/json
+Body (raw JSON):
+{
+  "email": "dr.smith@example.com",
+  "name": "Dr. Sarah Smith",
+  "role": "doctor",
+  "contact_info": "+1234567891",
+  "password": "DoctorPass123!",
+  "password2": "DoctorPass123!"
+}
+6. Test Creating an Admin
+Request:
+Method: POST
+URL: {{base_url}}/users/
+Headers: Content-Type: application/json
+{
+  "email": "admin@example.com",
+  "name": "Admin User",
+  "role": "admin",
+  "contact_info": "+1234567892",
+  "password": "AdminPass123!",
+  "password2": "AdminPass123!"
+}
+7. Test Patient Profile Creation
+Request:
+Method: POST
+URL: {{base_url}}/patient-profiles/
+Headers: Content-Type: application/json
+Body (raw JSON):
+{
+  "date_of_birth": "1990-05-15",
+  "gender": "male",
+  "blood_type": "O+",
+  "emergency_contact": "+1234567890",
+  "medical_history": "No known allergies",
+  "current_medications": "None"
+}
 
+Expected Response 
+{
+  "id": 1,
+  "user": {
+    "id": 1,
+    "email": "testpatient@example.com",
+    "name": "John Doe",
+    "role": "patient"
+  },
+  "date_of_birth": "1990-05-15",
+  "gender": "male",
+  "blood_type": "O+",
+  "emergency_contact": "+1234567890",
+  "medical_history": "No known allergies",
+  "current_medications": "None",
+  "age": 33,
+  "created_at": "2024-01-15T10:00:00Z",
+  "updated_at": "2024-01-15T10:00:00Z"
+}
